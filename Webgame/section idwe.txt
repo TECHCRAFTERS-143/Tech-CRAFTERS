@@ -1,0 +1,11 @@
+<section id="webapps">
+  <h2>
+    <a href="webgames.html" style="color: inherit; text-decoration: none;">
+      Web Games
+    </a>
+  </h2>
+  <div class="grid">
+    <div class="card">Typing Speed game</div>
+    <div class="card">XOX Game</div>
+  </div>
+</section>

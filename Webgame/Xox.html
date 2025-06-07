@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>XOX Game - Multiplayer or AI</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 8px #00fff2;
+    }
+
+    .controls {
+      margin-bottom: 1rem;
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .scoreboard {
+      margin: 1rem auto;
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 10px;
+      justify-content: center;
+      margin: 2rem auto;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: #fff;
+      color: #000;
+      font-size: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .cell:hover {
+      background: #e6ffe6;
+      transform: scale(1.05);
+    }
+
+    .message {
+      font-size: 1.2rem;
+      margin: 1rem;
+      font-weight: bold;
+    }
+
+    .buttons {
+      margin-top: 1rem;
+    }
+
+    .buttons button {
+      background-color: #00fff2;
+      color: #000;
+    }
+
+    .buttons button:hover {
+      background-color: #00c6b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎮 XOX Game</h1>
+
+  <div class="controls">
+    <label for="mode">Select Mode:</label>
+    <select id="mode" onchange="resetAll()">
+      <option value="ai">Player vs AI</option>
+      <option value="multi">Multiplayer</option>
+    </select>
+  </div>
+
+  <div class="scoreboard">
+    <div>👤 Player X: <span id="x-score">0</span></div>
+    <div>🤖 Player O: <span id="o-score">0</span></div>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="message" id="message">Player X's turn</div>
+
+  <div class="buttons">
+    <button onclick="resetGame()">🔁 Reset Game</button>
+    <button onclick="resetAll()">🧼 Reset All</button>
+  </div>
+
+  <script>
+    const boardEl = document.getElementById('board');
+    const messageEl = document.getElementById('message');
+    const modeSelect = document.getElementById('mode');
+    const xScoreEl = document.getElementById('x-score');
+    const oScoreEl = document.getElementById('o-score');
+
+    let board = Array(9).fill(null);
+    let currentPlayer = 'X';
+    let gameActive = true;
+    let xScore = 0;
+    let oScore = 0;
+
+    const winPatterns = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function initBoard() {
+      boardEl.innerHTML = '';
+      board = Array(9).fill(null);
+      gameActive = true;
+      currentPlayer = 'X';
+      messageEl.textContent = `Player ${currentPlayer}'s turn`;
+
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.index = i;
+        cell.addEventListener('click', handleClick);
+        boardEl.appendChild(cell);
+      }
+    }
+
+    function handleClick(e) {
+      const index = e.target.dataset.index;
+      if (!gameActive || board[index]) return;
+
+      board[index] = currentPlayer;
+      e.target.textContent = currentPlayer;
+
+      if (checkWin()) {
+        messageEl.textContent = `🎉 Player ${currentPlayer} wins!`;
+        gameActive = false;
+        updateScore(currentPlayer);
+        return;
+      }
+
+      if (board.every(cell => cell)) {
+        messageEl.textContent = "🤝 It's a draw!";
+        gameActive = false;
+        return;
+      }
+
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      messageEl.textContent = `Player ${currentPlayer}'s turn`;
+
+      // If AI mode and it's AI's turn
+      if (modeSelect.value === 'ai' && currentPlayer === 'O') {
+        setTimeout(aiMove, 500);
+      }
+    }
+
+    function aiMove() {
+      // Simple AI: Pick first empty cell
+      for (let i = 0; i < 9; i++) {
+        if (!board[i]) {
+          const cell = boardEl.querySelector(`[data-index="${i}"]`);
+          cell.click();
+          break;
+        }
+      }
+    }
+
+    function checkWin() {
+      return winPatterns.some(([a, b, c]) => {
+        return board[a] && board[a] === board[b] && board[b] === board[c];
+      });
+    }
+
+    function updateScore(winner) {
+      if (winner === 'X') {
+        xScore++;
+        xScoreEl.textContent = xScore;
+      } else {
+        oScore++;
+        oScoreEl.textContent = oScore;
+      }
+    }
+
+    function resetGame() {
+      initBoard();
+    }
+
+    function resetAll() {
+      xScore = 0;
+      oScore = 0;
+      xScoreEl.textContent = '0';
+      oScoreEl.textContent = '0';
+      resetGame();
+    }
+
+    // Init game on load
+    initBoard();
+  </script>
+</body>
+</html>

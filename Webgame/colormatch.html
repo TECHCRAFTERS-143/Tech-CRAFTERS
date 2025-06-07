@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Color Match Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #00ffcc;
+      margin-bottom: 20px;
+    }
+
+    .color-boxes {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      width: 150px;
+      height: 150px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px #00ffcc88;
+    }
+
+    .sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 300px;
+    }
+
+    .slider-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      width: 200px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #00ffcc;
+      border: none;
+      border-radius: 10px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00ffaa;
+    }
+
+    #score {
+      font-size: 1.5rem;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎨 Color Match Game</h1>
+
+  <div class="color-boxes">
+    <div id="targetColor" class="box"></div>
+    <div id="userColor" class="box"></div>
+  </div>
+
+  <div class="sliders">
+    <div class="slider-group">
+      <label>🔴 Red</label>
+      <input type="range" min="0" max="255" value="128" id="redSlider">
+    </div>
+    <div class="slider-group">
+      <label>🟢 Green</label>
+      <input type="range" min="0" max="255" value="128" id="greenSlider">
+    </div>
+    <div class="slider-group">
+      <label>🔵 Blue</label>
+      <input type="range" min="0" max="255" value="128" id="blueSlider">
+    </div>
+  </div>
+
+  <button onclick="checkMatch()">🎯 Check Match</button>
+  <div id="score"></div>
+  <button onclick="generateTargetColor()">🔄 New Color</button>
+
+  <script>
+    const targetBox = document.getElementById("targetColor");
+    const userBox = document.getElementById("userColor");
+
+    const redSlider = document.getElementById("redSlider");
+    const greenSlider = document.getElementById("greenSlider");
+    const blueSlider = document.getElementById("blueSlider");
+
+    let targetColor = { r: 0, g: 0, b: 0 };
+
+    function generateTargetColor() {
+      targetColor.r = Math.floor(Math.random() * 256);
+      targetColor.g = Math.floor(Math.random() * 256);
+      targetColor.b = Math.floor(Math.random() * 256);
+
+      targetBox.style.backgroundColor = `rgb(${targetColor.r}, ${targetColor.g}, ${targetColor.b})`;
+      document.getElementById("score").textContent = "";
+      updateUserColor();
+    }
+
+    function updateUserColor() {
+      const r = parseInt(redSlider.value);
+      const g = parseInt(greenSlider.value);
+      const b = parseInt(blueSlider.value);
+      userBox.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function checkMatch() {
+      const r = parseInt(redSlider.value);
+      const g = parseInt(greenSlider.value);
+      const b = parseInt(blueSlider.value);
+
+      const diffR = Math.abs(r - targetColor.r);
+      const diffG = Math.abs(g - targetColor.g);
+      const diffB = Math.abs(b - targetColor.b);
+
+      const totalDiff = diffR + diffG + diffB;
+
+      const maxDiff = 255 * 3;
+      const score = Math.round(((maxDiff - totalDiff) / maxDiff) * 100);
+
+      document.getElementById("score").textContent = `🎉 Your Score: ${score}%`;
+    }
+
+    // Update user color preview on slider move
+    redSlider.addEventListener("input", updateUserColor);
+    greenSlider.addEventListener("input", updateUserColor);
+    blueSlider.addEventListener("input", updateUserColor);
+
+    // Initialize game
+    generateTargetColor();
+  </script>
+
+</body>
+</html>

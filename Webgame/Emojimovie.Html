@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🎬 Emoji Puzzle Game - 500+ Levels Mixed</title>
+<style>
+  body {
+    background: #121212;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 600px;
+    margin: auto;
+  }
+  h1 {
+    color: #00ffcc;
+    margin-bottom: 20px;
+  }
+  .emoji {
+    font-size: 4rem;
+    margin: 20px 0;
+    user-select: none;
+  }
+  input {
+    padding: 12px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 400px;
+    margin-top: 10px;
+    outline: none;
+    background: #222;
+    color: #fff;
+  }
+  button {
+    margin: 10px 5px;
+    padding: 12px 22px;
+    background: #00ffcc;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    user-select: none;
+  }
+  button:hover {
+    background: #00ffaa;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 1.3rem;
+    min-height: 24px;
+  }
+  #hint {
+    font-style: italic;
+    color: #aaa;
+    margin-top: 8px;
+    min-height: 22px;
+  }
+  #scoreboard {
+    margin-top: 25px;
+    font-size: 1.5rem;
+    color: #00ffaa;
+  }
+  #level {
+    margin-top: 8px;
+    font-weight: bold;
+    color: #00ffcc;
+  }
+  @media (max-width: 400px) {
+    .emoji {
+      font-size: 3rem;
+    }
+    input {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>🎬 Emoji Puzzle Game - 500+ Levels Mixed</h1>
+
+<div id="level">Level 1</div>
+<div class="emoji" id="emojiDisplay">🎬🦁👑</div>
+<div id="hint">Hint: ???</div>
+
+<input type="text" id="answerInput" placeholder="Type your answer..." autocomplete="off" />
+<br />
+<button onclick="checkAnswer()">✅ Submit</button>
+<button onclick="showHint()">💡 Hint</button>
+<button onclick="skipPuzzle()">⏭️ Skip (-5 pts)</button>
+
+<div id="result"></div>
+<div id="scoreboard">Score: 0</div>
+
+<script>
+  // Base puzzles (70+ sample entries, repeated & shuffled to reach 510+)
+  const basePuzzles = [
+    { emojis: "🎬🦁👑", answer: "the lion king", hint: "Famous Disney movie" },
+    { emojis: "🧙‍♂️🧹🦉", answer: "harry potter", hint: "Wizarding world" },
+    { emojis: "🚢🧊💑", answer: "titanic", hint: "Romantic disaster movie" },
+    { emojis: "🦖🏞️🚁", answer: "jurassic park", hint: "Dinosaurs unleashed" },
+    { emojis: "🕷️🧑🕸️", answer: "spiderman", hint: "Web-slinging superhero" },
+    { emojis: "🚗🔥💨", answer: "fast and furious", hint: "Car racing series" },
+    { emojis: "👻🔫🚫", answer: "ghostbusters", hint: "Who you gonna call?" },
+    { emojis: "🌌⚔️🚀", answer: "star wars", hint: "Galaxy far, far away" },
+    { emojis: "🐘👂🎪", answer: "dumbo", hint: "Flying elephant" },
+    { emojis: "👧🐻🌲", answer: "goldilocks", hint: "Children's story" },
+    { emojis: "🕵️‍♂️🔍🐶", answer: "sherlock holmes", hint: "Famous detective" },
+    { emojis: "🍫🏭👦", answer: "charlie and the chocolate factory", hint: "Wonka's factory" },
+    { emojis: "💀🏴‍☠️🌊", answer: "pirates of the caribbean", hint: "Captain Jack Sparrow" },
+    { emojis: "🌪️👠🦁", answer: "wizard of oz", hint: "Follow the yellow brick road" },
+    { emojis: "🧙‍♂️💍🔥", answer: "lord of the rings", hint: "Epic fantasy quest" },
+    { emojis: "🚀👨‍🚀🌕", answer: "apollo 13", hint: "NASA space mission" },
+    { emojis: "🐉🔥🏰", answer: "game of thrones", hint: "Dragons and kingdoms" },
+    { emojis: "🦇🌃", answer: "batman", hint: "Dark knight" },
+    { emojis: "👸❄️⛄", answer: "frozen", hint: "Let it go" },
+    { emojis: "🦸‍♂️🔨", answer: "thor", hint: "God of thunder" },
+    { emojis: "🚗👦🏻🎢", answer: "toy story", hint: "Toys come to life" },
+    { emojis: "🎤👩‍🎤👨‍🎤", answer: "bohemian rhapsody", hint: "Queen movie" },
+    { emojis: "🚜🌽🐍", answer: "jurassic world", hint: "Dinosaurs theme park" },
+    { emojis: "👑🧙‍♂️🐍", answer: "harry potter and the chamber of secrets", hint: "Sequel movie" },
+    { emojis: "🌍🔥🌊", answer: "mad max fury road", hint: "Post-apocalyptic chase" },
+    { emojis: "👸🐉🔥", answer: "how to train your dragon", hint: "Viking and dragon" },
+    { emojis: "🐼🥋", answer: "kung fu panda", hint: "Martial arts bear" },
+    { emojis: "🧟‍♂️🔫🏹", answer: "the walking dead", hint: "Zombie apocalypse" },
+    { emojis: "👩‍🚀🌑🌌", answer: "interstellar", hint: "Space travel movie" },
+    { emojis: "🏀👟🎓", answer: "space jam", hint: "Basketball + cartoons" },
+    { emojis: "🐒👽🚀", answer: "planet of the apes", hint: "Apes take over" },
+    { emojis: "🦸‍♀️🌩️", answer: "wonder woman", hint: "Amazon warrior" },
+    { emojis: "🎩🐰🎭", answer: "the prestige", hint: "Magicians rivalry" },
+    { emojis: "💀🤖🔥", answer: "terminator", hint: "Future robot war" },
+    { emojis: "🧛‍♂️🩸🦇", answer: "dracula", hint: "Vampire classic" },
+    { emojis: "🐵🦍🌴", answer: "king kong", hint: "Giant ape" },
+    { emojis: "🐧❄️🎶", answer: "happy feet", hint: "Dancing penguins" },
+    { emojis: "🎥💣🕵️‍♀️", answer: "mission impossible", hint: "Spy action" },
+    { emojis: "👑🗡️⚔️", answer: "gladiator", hint: "Roman arena" },
+    { emojis: "🐛🦋🌺", answer: "the butterfly effect", hint: "Changing past" },
+    { emojis: "🚂💨💥", answer: "murder on the orient express", hint: "Famous train mystery" },
+    { emojis: "👩‍🔬🦠🧪", answer: "contagion", hint: "Virus outbreak" },
+    { emojis: "🧛‍♀️❤️🧟", answer: "twilight", hint: "Vampires and love" },
+    { emojis: "🕵️‍♂️🖤🗡️", answer: "sherlock holmes", hint: "Famous detective" },
+    { emojis: "🎤👨‍🎤🎸", answer: "bohemian rhapsody", hint: "Queen biopic" },
+    { emojis: "🐉⚔️🏯", answer: "mulan", hint: "Chinese warrior" },
+    { emojis: "🚀🌕🌌", answer: "first man", hint: "Neil Armstrong story" },
+    { emojis: "🐶🐱🐰", answer: "pets", hint: "Animals in the city" },
+    { emojis: "🎭🃏🕶️", answer: "joker", hint: "Batman villain" },
+    { emojis: "👻🏠🔦", answer: "paranormal activity", hint: "Haunted house" },
+    { emojis: "🏝️🧔🦜", answer: "cast away", hint: "Survivor on island" },
+    { emojis: "🦸‍♂️🛡️🕷️", answer: "captain america", hint: "Super soldier" },
+    { emojis: "🐦💨🔫", answer: "birds of prey", hint: "DC superhero team" },
+    { emojis: "🐺🌕", answer: "werewolf", hint: "Full moon monster" },
+    { emojis: "🍎🚀👩‍🚀", answer: "gravity", hint: "Space disaster" },
+    { emojis: "🦖🌋🏞️", answer: "jurassic world", hint: "Dinosaurs park" },
+    { emojis: "🌍🔥🌪️", answer: "2012", hint: "End of the world" },
+    { emojis: "🧟‍♀️🔫🏃‍♂️", answer: "resident evil", hint: "Zombie apocalypse" },
+    { emojis: "🐦🦅🦉", answer: "birds of prey", hint: "Superhero team" },
+    { emojis: "🦄🌈✨", answer: "my little pony", hint: "Colorful ponies" },
+    { emojis: "🎃👻🕷️", answer: "halloween", hint: "Scary holiday" },
+    { emojis: "🧙‍♂️🧙‍♀️⚡", answer: "fantastic beasts", hint: "Wizarding creatures" },
+    { emojis: "🧙‍♂️🐉🏰", answer: "harry potter", hint: "Wizard adventures" },
+    { emojis: "🏎️💨🔥", answer: "fast and furious", hint: "Fast cars" },
+  ];
+
+  // Shuffle function
+  function shuffleArray(array) {
+    for (let i = array.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  // Generate puzzles list (510+ puzzles) by repeating base puzzles & shuffling
+  let puzzles = [];
+  while(puzzles.length < 510) {
+    puzzles = puzzles.concat(basePuzzles.map(p => ({...p})));
+  }
+  puzzles = puzzles.slice(0, 510);
+  shuffleArray(puzzles);
+
+  let currentIndex = 0;
+  let score = 0;
+
+  function loadPuzzle() {
+    const puzzle = puzzles[currentIndex];
+    document.getElementById('emojiDisplay').textContent = puzzle.emojis;
+    document.getElementById('hint').textContent = "Hint: ???";
+    document.getElementById('answerInput').value = "";
+    document.getElementById('result').textContent = "";
+    document.getElementById('scoreboard').textContent = `Score: ${score}`;
+    document.getElementById('level').textContent = `Level ${currentIndex + 1} / ${puzzles.length}`;
+    document.getElementById('answerInput').focus();
+  }
+
+  function normalize(text) {
+    return text.trim().toLowerCase().replace(/[^a-z0-9\s]/gi, '');
+  }
+
+  function checkAnswer() {
+    const userAnswer = normalize(document.getElementById('answerInput').value);
+    const correctAnswer = normalize(puzzles[currentIndex].answer);
+
+    if (!userAnswer) {
+      document.getElementById('result').textContent = "Please enter an answer!";
+      return;
+    }
+
+    if (userAnswer === correctAnswer) {
+      score += 10;
+      document.getElementById('result').textContent = "✅ Correct!";
+      currentIndex = (currentIndex + 1) % puzzles.length;
+      setTimeout(loadPuzzle, 1200);
+    } else {
+      document.getElementById('result').textContent = "❌ Try again!";
+    }
+    document.getElementById('scoreboard').textContent = `Score: ${score}`;
+  }
+
+  function showHint() {
+    document.getElementById('hint').textContent = "Hint: " + puzzles[currentIndex].hint;
+  }
+
+  function skipPuzzle() {
+    score = Math.max(0, score - 5);
+    currentIndex = (currentIndex + 1) % puzzles.length;
+    document.getElementById('result').textContent = "⏭️ Skipped!";
+    loadPuzzle();
+  }
+
+  // Support Enter key for submit
+  document.getElementById('answerInput').addEventListener('keydown', function(e) {
+    if(e.key === 'Enter') {
+      checkAnswer();
+    }
+  });
+
+  loadPuzzle();
+</script>
+
+</body>
+</html>

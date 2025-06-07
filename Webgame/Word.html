@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Scramble Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e2f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    h1 {
+      color: #00ffd5;
+      text-shadow: 0 0 10px #00ffd5;
+    }
+    #game {
+      background: #2a2a40;
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #000;
+      text-align: center;
+      width: 300px;
+    }
+    #scrambled {
+      font-size: 2rem;
+      letter-spacing: 3px;
+      margin: 15px 0;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      margin: 10px 0;
+    }
+    button {
+      background: #00ffd5;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #score, #timer {
+      margin-top: 10px;
+      font-size: 1.2rem;
+    }
+    select {
+      margin: 10px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔤 Word Scramble Game</h1>
+
+<div id="game">
+  <label for="level">Select Level:</label>
+  <select id="level">
+    <option value="Easy">Easy</option>
+    <option value="Medium">Medium</option>
+    <option value="Hard">Hard</option>
+  </select>
+
+  <div id="scrambled">____</div>
+
+  <input type="text" id="guess" placeholder="Your guess here" />
+  <button onclick="checkGuess()">Submit</button>
+
+  <div id="score">Score: 0</div>
+  <div id="timer">Time: 30s</div>
+</div>
+
+<script>
+  const words = {
+    Easy: ['hat', 'bus', 'hen', 'jam', 'top', 'hut', 'dig', 'rat', 'bat', 'red', 'pen', 'net', 'mug', 'toy', 'bed', 'bug', 'milk', 'man', 'can', 'tap', 'zip', 'row', 'web', 'cap', 'pad', 'boy', 'pit', 'nap', 'leg', 'jar', 'pan', 'run', 'yes', 'ball', 'cat', 'hop', 'fix', 'tea', 'win', 'fox', 'pop', 'map', 'box', 'sun', 'cry', 'fan', 'log', 'sit', 'gym', 'cup'],
+    Medium: ['planet', 'jungle', 'window', 'guitar', 'rocket', 'school', 'yellow', 'market', 'sister', 'bottle', 'winter', 'mother', 'father', 'laptop', 'camera', 'python', 'basket', 'orange', 'cookie', 'finger', 'purple', 'bridge', 'pillow', 'flower', 'folder', 'jacket', 'monkey', 'dollar', 'driver', 'garden', 'hammer', 'minute', 'number', 'spider', 'mirror', 'ticket', 'tunnel', 'helmet', 'circle'],
+    Hard: ['elephant', 'astronaut', 'chocolate', 'universe', 'algorithm', 'butterfly', 'architect', 'dangerous', 'adventure', 'explosion', 'mountain', 'volunteer', 'crocodile', 'telescope', 'rectangle', 'spaceship', 'knowledge', 'invisible', 'wonderful', 'microscope', 'helicopter', 'newspaper', 'nightmare', 'orchestra', 'literature', 'dinosaur', 'signature', 'character', 'dishwasher', 'motorcycle', 'restaurant', 'vocabulary']
+  };
+
+  let currentWord = '';
+  let scrambled = '';
+  let score = 0;
+  let time = 30;
+  let timer;
+
+  function shuffleWord(word) {
+    return word.split('').sort(() => Math.random() - 0.5).join('');
+  }
+
+  function pickWord() {
+    const level = document.getElementById("level").value;
+    const list = words[level];
+    currentWord = list[Math.floor(Math.random() * list.length)];
+    scrambled = shuffleWord(currentWord);
+    while (scrambled === currentWord) {
+      scrambled = shuffleWord(currentWord);
+    }
+    document.getElementById("scrambled").textContent = scrambled;
+    document.getElementById("guess").value = '';
+    resetTimer();
+  }
+
+  function checkGuess() {
+    const userGuess = document.getElementById("guess").value.trim().toLowerCase();
+    if (userGuess === currentWord) {
+      score++;
+      document.getElementById("score").textContent = `Score: ${score}`;
+      pickWord();
+    } else {
+      alert("❌ Wrong! Try again.");
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timer);
+    time = 30;
+    document.getElementById("timer").textContent = `Time: ${time}s`;
+    timer = setInterval(() => {
+      time--;
+      document.getElementById("timer").textContent = `Time: ${time}s`;
+      if (time === 0) {
+        clearInterval(timer);
+        alert(`⏰ Time's up! Final Score: ${score}`);
+        score = 0;
+        document.getElementById("score").textContent = `Score: 0`;
+        pickWord();
+      }
+    }, 1000);
+  }
+
+  document.getElementById("level").addEventListener("change", () => {
+    score = 0;
+    document.getElementById("score").textContent = `Score: 0`;
+    pickWord();
+  });
+
+  // Start game
+  pickWord();
+</script>
+
+</body>
+</html>
