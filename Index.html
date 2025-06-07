@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> TC IT Company</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      scroll-behavior: smooth;
+      transition: background 0.5s ease-in-out;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      background: #111;
+      animation: slideIn 1s ease-in-out;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: glow 2s infinite alternate;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #1a1a1a;
+      padding: 10px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 30px;
+      background: #292929;
+      transition: all 0.3s ease;
+    }
+
+    nav a:hover {
+      background: #00c6ff;
+      color: black;
+      transform: scale(1.05);
+    }
+
+    section {
+      padding: 60px 20px;
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+
+    section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e1e1e;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transition: transform 0.5s ease, background 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.01%);
+      background-size: 10px 10px;
+      animation: movePattern 10s linear infinite;
+      z-index: 0;
+    }
+
+    .card:hover {
+      transform: scale(1.05) rotate(-1deg);
+      background: linear-gradient(145deg, #222, #333);
+    }
+
+    .card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    footer {
+      background: #111;
+      padding: 30px;
+      text-align: center;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes slideIn {
+      from {transform: translateY(-100%); opacity: 0;}
+      to {transform: translateY(0); opacity: 1;}
+    }
+
+    @keyframes glow {
+      from {text-shadow: 0 0 10px #00c6ff;}
+      to {text-shadow: 0 0 20px #00c6ff, 0 0 30px #00c6ff;}
+    }
+
+    @keyframes movePattern {
+      from {transform: translate(0, 0);}
+      to {transform: translate(50px, 50px);}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TechCrafters – Product Based IT Company</h1>
+  </header>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#apps">Apps</a>
+    <a href="#webpages">Web Pages</a>
+    <a href="#webapps">Web Applications</a>
+    <a href="#webgames">Web games</a>
+    <a href="#members">Team</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <section id="home">
+    <h2>Welcome to TechCrafters</h2>
+    <p>We build smart digital products, apps, and web experiences that bring ideas to life.</p>
+  </section>
+
+  <section id="about">
+    <h2>About Us</h2>
+    <p>TechCrafters is a passionate team of developers building innovative products with maximum creativity.</p>
+  </section>
+
+  <section id="projects">
+    <h2>Our Projects</h2>
+    <div class="grid">
+      <div class="card">Instagram Caption Generator</div>
+      <div class="card">Emotion Sentiment Analyzer</div>
+      <div class="card">Student Dashboard System</div>
+    </div>
+  </section>
+
+  <section id="apps">
+    <h2>Apps</h2>
+    <div class="grid">
+      <div class="card">Mood-Based Music Player</div>
+    </div>
+  </section>
+
+  <section id="webpages">
+    <h2>Web Pages</h2>
+    <div class="grid">
+      <div class="card">Personal Portfolio Templates</div>
+      <div class="card">Blog UI with Comment Section</div>
+    </div>
+  </section>
+
+  <section id="webapps">
+    <h2>Web Applications</h2>
+    <div class="grid">
+      <div class="card">QR Generator</div>
+      <div class="card">style drawing</div>
+      <div class="card">AI chatbox</div>
+    </div>
+  </section>
+  <section id="webapps">
+  <h2>
+    <a href="Webgame/Webgame.html" style="color: inherit; text-decoration: none;">
+      Web Games
+    </a>
+  </h2>
+  <div class="grid">
+    <div class="card">Typing Speed game</div>
+    <div class="card">XOX Game</div>
+  </div>
+</section>
+
+  <section id="members">
+    <h2>Team Members</h2>
+    <div class="grid">
+      <div class="card">Jagathish – Founder & Full Stack Developer ,python,java</div>
+      <div class="card">Prem Kumar – Co-Founder & UI/UX Engineer//Full Stack Developer </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: TechCrafters143@gmail.com</p>
+    <p><a href="https://www.linkedin.com/in/prem-kumar-6b9901361?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app">linkedin:Prem Kumar</a></p>
+    <p><a href="https://www.linkedin.com/in/jagathish-t-ab46102a4?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app ">linkedin:jagathish</a></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 TechMinds. Built with passion.</p>
+  </footer>
+
+  <script>
+    // Scroll reveal effect
+    const sections = document.querySelectorAll('section');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = 1;
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    sections.forEach(section => {
+      section.style.opacity = 0;
+      section.style.transform = 'translateY(50px)';
+      section.style.transition = 'all 0.8s ease-out';
+      observer.observe(section);
+    });
+  </script>
+</body>
+</html>
