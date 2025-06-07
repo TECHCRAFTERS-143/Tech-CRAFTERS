@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emoji Space Shooter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      overflow: hidden;
+      background: black;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: black;
+    }
+    #startBtn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ff0;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <button id="startBtn">Start Game 🚀</button>
+  <canvas id="gameCanvas"></canvas>  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const ship = {
+      x: canvas.width / 2,
+      y: canvas.height - 100,
+      size: 50,
+      emoji: "🛸",
+    };
+
+    const fireTypes = [
+      { img: "one.png", speed: 7 },
+      { img: "two.png", speed: 10 },
+      { img: "three.png", speed: 15 },
+    ];
+
+    const fireImages = fireTypes.map(type => {
+      const image = new Image();
+      image.src = type.img;
+      return image;
+    });
+
+    const enemies = ["👾", "👹", "💀", "🤖"];
+    let bullets = [];
+    let enemyShips = [];
+    let gameRunning = false;
+    let score = 0;
+
+    function drawShip() {
+      ctx.font = `${ship.size}px serif`;
+      ctx.fillText(ship.emoji, ship.x, ship.y);
+    }
+
+    function drawBullets() {
+      bullets.forEach((b, i) => {
+        ctx.drawImage(b.img, b.x, b.y, 30, 30);
+        b.y -= b.speed;
+        if (b.y < 0) bullets.splice(i, 1);
+      });
+    }
+
+    function drawEnemies() {
+      enemyShips.forEach((e, i) => {
+        ctx.font = "40px serif";
+        ctx.fillText(e.emoji, e.x, e.y);
+        e.y += 2;
+
+        // Collision check
+        bullets.forEach((b, j) => {
+          if (
+            b.x > e.x - 20 &&
+            b.x < e.x + 20 &&
+            b.y > e.y - 20 &&
+            b.y < e.y + 20
+          ) {
+            enemyShips.splice(i, 1);
+            bullets.splice(j, 1);
+            score++;
+          }
+        });
+      });
+    }
+
+    function spawnEnemies() {
+      const emoji = enemies[Math.floor(Math.random() * enemies.length)];
+      const x = Math.random() * (canvas.width - 40);
+      enemyShips.push({ x, y: -40, emoji });
+    }
+
+    function updateGame() {
+      if (!gameRunning) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawShip();
+      drawBullets();
+      drawEnemies();
+
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.fillText(`Score: ${score}`, 10, 30);
+
+      requestAnimationFrame(updateGame);
+    }
+
+    document.addEventListener("mousemove", (e) => {
+      ship.x = e.clientX;
+    });
+
+    document.addEventListener("click", () => {
+      const index = Math.floor(Math.random() * fireTypes.length);
+      bullets.push({ x: ship.x, y: ship.y - 30, img: fireImages[index], speed: fireTypes[index].speed });
+    });
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      document.getElementById("startBtn").style.display = "none";
+      gameRunning = true;
+      setInterval(spawnEnemies, 1000);
+      updateGame();
+    });
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script></body>
+</html>
