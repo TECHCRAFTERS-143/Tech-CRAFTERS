@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Typing Speed Test - 50+ Paragraphs</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #283e51, #485563);
+    color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 10px;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 700px;
+    width: 100%;
+    background: rgba(255 255 255 / 0.1);
+    padding: 30px 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    color: #ffca28;
+  }
+  #textDisplay {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    background: #1c1c1c;
+    padding: 20px;
+    border-radius: 10px;
+    user-select: none;
+    margin-bottom: 20px;
+    min-height: 120px;
+    white-space: pre-wrap;
+  }
+  #textDisplay span.correct {
+    color: #4caf50;
+  }
+  #textDisplay span.incorrect {
+    color: #f44336;
+    text-decoration: underline wavy red;
+  }
+  #inputArea {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+  }
+  #inputArea:disabled {
+    background: #555;
+    color: #ccc;
+  }
+  .stats {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    color: #ffd54f;
+  }
+  #startBtn {
+    display: block;
+    margin: 25px auto 0;
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    border: none;
+    background: #ff5722;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #startBtn:hover:not(:disabled) {
+    background: #e64a19;
+  }
+  #timer {
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Typing Speed Test</h1>
+    <div id="textDisplay"></div>
+    <input id="inputArea" type="text" placeholder="Start typing here..." disabled autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    <div class="stats">
+      <div>Time Left: <span id="timer">60</span>s</div>
+      <div>WPM: <span id="wpm">0</span></div>
+      <div>Accuracy: <span id="accuracy">0%</span></div>
+    </div>
+    <button id="startBtn">Start Test</button>
+  </div>
+
+<script>
+  const paragraphs = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Typing is a valuable skill that helps with productivity in work, study, and communication.",
+    "Technology has made communication faster and easier.",
+    "In this test, try to maintain a steady pace and focus on accuracy rather than speed at first.",
+    "Every expert was once a beginner.",
+    "Words per minute (WPM) is the standard measurement used to evaluate typing speed.",
+    "Learn to position your fingers correctly on the keyboard to minimize hand fatigue and maximize speed.",
+    "Remember to take breaks during long typing sessions to avoid strain.",
+    "Various typing games and tests are available online.",
+    "Typing tests challenge both your mind and your hands.",
+    "Practice makes perfect; consistent typing practice will improve your skills.",
+    "Keyboard shortcuts can speed up your workflow significantly.",
+    "Correct posture while typing reduces the risk of repetitive strain injuries.",
+    "The home row is the base position for touch typing.",
+    "Accuracy matters more than speed when you're just starting out.",
+    "Typing quickly requires muscle memory developed through repetition.",
+    "A clean workspace can improve your concentration while typing.",
+    "Some people prefer mechanical keyboards for better typing feedback.",
+    "Learning to type without looking at the keyboard is called touch typing.",
+    "Use all your fingers to type efficiently and reduce errors.",
+    "Speed reading and fast typing go hand in hand for productivity.",
+    "Online typing tutors can help you track your progress.",
+    "Timed tests help simulate real-world typing conditions.",
+    "Developing good typing habits early on is crucial for success.",
+    "The average typing speed is about 40 words per minute.",
+    "Advanced typists can exceed speeds of 100 words per minute.",
+    "Typing is essential for coders, writers, and data entry professionals.",
+    "Proper keyboard layout knowledge improves typing efficiency.",
+    "Typing rhythm can help maintain a steady speed.",
+    "Avoid looking at your hands to increase typing accuracy.",
+    "Use a light touch on the keys to prevent finger fatigue.",
+    "Many languages require specialized keyboard layouts.",
+    "Practice different punctuation marks to improve overall typing.",
+    "Typing can be a fun and relaxing activity.",
+    "Regular breaks during typing prevent eye strain and muscle tension.",
+    "Custom typing tests can target your weak areas.",
+    "Monitor your progress to stay motivated during practice.",
+    "Typing speed tests are often used in job screenings.",
+    "Ergonomic keyboards are designed to minimize strain.",
+    "Some people use typing games to make practice enjoyable.",
+    "Mistakes are natural; focus on correcting them quickly.",
+    "You can improve typing speed through drills and exercises.",
+    "Transcribing audio is a good way to practice typing.",
+    "Touch typing skills are transferable across different devices.",
+    "Typing fluency improves with continuous exposure and use.",
+    "Memorize the keyboard layout for better performance.",
+    "Use online communities to share typing tips and experiences.",
+    "Typing contests are held worldwide for enthusiasts.",
+    "Learning to type well opens up many career opportunities.",
+    "The more you type, the better your brain-hand coordination becomes.",
+    "Keyboarding classes are often offered in schools to build skills.",
+    "Typing speed and accuracy are critical for professional typists.",
+    "Typing tests can be adapted for special needs and accessibility."
+  ];
+
+  const textDisplay = document.getElementById('textDisplay');
+  const inputArea = document.getElementById('inputArea');
+  const timerDisplay = document.getElementById('timer');
+  const wpmDisplay = document.getElementById('wpm');
+  const accuracyDisplay = document.getElementById('accuracy');
+  const startBtn = document.getElementById('startBtn');
+
+  let timer = 60;
+  let interval = null;
+  let correctChars = 0;
+  let totalTyped = 0;
+  let isTestRunning = false;
+  let currentParagraph = '';
+
+  function loadText(text) {
+    textDisplay.innerHTML = '';
+    text.split('').forEach(char => {
+      const span = document.createElement('span');
+      span.innerText = char;
+      textDisplay.appendChild(span);
+    });
+  }
+
+  function pickRandomParagraph() {
+    const randomIndex = Math.floor(Math.random() * paragraphs.length);
+    return paragraphs[randomIndex];
+  }
+
+  function startTest() {
+    resetTest();
+    isTestRunning = true;
+    currentParagraph = pickRandomParagraph();
+    loadText(currentParagraph);
+    inputArea.disabled = false;
+    inputArea.focus();
+    startBtn.disabled = true;
+    timerDisplay.textContent = timer;
+
+    interval = setInterval(() => {
+      timer--;
+      timerDisplay.textContent = timer;
+      if (timer === 0) endTest();
+    }, 1000);
+  }
+
+  function resetTest() {
+    clearInterval(interval);
+    timer = 60;
+    correctChars = 0;
+    totalTyped = 0;
+    isTestRunning = false;
+    currentParagraph = '';
+    wpmDisplay.textContent = '0';
+    accuracyDisplay.textContent = '0%';
+    inputArea.value = '';
+    inputArea.disabled = true;
+    startBtn.disabled = false;
+    textDisplay.innerHTML = '';
+  }
+
+  function endTest() {
+    clearInterval(interval);
+    isTestRunning = false;
+    inputArea.disabled = true;
+    startBtn.disabled = false;
+
+    const minutes = (60 - timer) / 60;
+    const wpm = minutes > 0 ? Math.round((correctChars / 5) / minutes) : 0;
+    const accuracy = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 0;
+
+    wpmDisplay.textContent = wpm;
+    accuracyDisplay.textContent = accuracy + '%';
+
+    alert(`Time's up!\nYour WPM: ${wpm}\nAccuracy: ${accuracy}%`);
+  }
+
+  function updateText() {
+    const input = inputArea.value;
+    totalTyped = input.length;
+    correctChars = 0;
+
+    const spans = textDisplay.querySelectorAll('span');
+    spans.forEach((span, idx) => {
+      const typedChar = input[idx];
+      if (typedChar == null) {
+        span.classList.remove('correct', 'incorrect');
+      } else if (typedChar === span.innerText) {
+        span.classList.add('correct');
+        span.classList.remove('incorrect');
+        correctChars++;
+      } else {
+        span.classList.add('incorrect');
+        span.classList.remove('correct');
+      }
+    });
+  }
+
+  inputArea.addEventListener('input', () => {
+    if (!isTestRunning) return;
+    updateText();
+  });
+
+  startBtn.addEventListener('click', startTest);
+
+  // Initialize with a random paragraph
+  currentParagraph = pickRandomParagraph();
+  loadText(currentParagraph);
+</script>
+</body>
+</html>

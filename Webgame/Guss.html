@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Guess the Number Game</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .game-container {
+    background: rgba(255 255 255 / 0.15);
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+  }
+  h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    animation: pulse 2s infinite;
+  }
+  input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  button {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 10px;
+    background: #ff6f61;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  button:hover {
+    background: #ff503f;
+  }
+  .message {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    min-height: 40px;
+    font-weight: 600;
+  }
+  .score {
+    font-size: 1.2rem;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); color: #fff; }
+    50% { transform: scale(1.05); color: #ffd369; }
+  }
+</style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>🎯 Guess the Number</h1>
+    <input id="guessInput" type="number" min="1" max="100" placeholder="Enter a number 1-100" />
+    <button id="guessBtn">Guess</button>
+    <button id="resetBtn" style="display:none; background:#4caf50;">Restart Game</button>
+    <div class="message" id="message">Try to guess the number!</div>
+    <div class="score" id="score">Attempts: 0</div>
+  </div>
+
+  <script>
+    const guessInput = document.getElementById('guessInput');
+    const guessBtn = document.getElementById('guessBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const message = document.getElementById('message');
+    const scoreDisplay = document.getElementById('score');
+
+    let secretNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+    let gameOver = false;
+
+    function resetGame() {
+      secretNumber = Math.floor(Math.random() * 100) + 1;
+      attempts = 0;
+      gameOver = false;
+      message.textContent = 'Try to guess the number!';
+      scoreDisplay.textContent = 'Attempts: 0';
+      guessInput.value = '';
+      guessInput.disabled = false;
+      guessBtn.style.display = 'inline-block';
+      resetBtn.style.display = 'none';
+    }
+
+    function checkGuess() {
+      if (gameOver) return;
+
+      const guess = Number(guessInput.value);
+
+      if (!guess || guess < 1 || guess > 100) {
+        message.textContent = 'Please enter a valid number between 1 and 100.';
+        return;
+      }
+
+      attempts++;
+      scoreDisplay.textContent = `Attempts: ${attempts}`;
+
+      if (guess === secretNumber) {
+        message.innerHTML = `<span style="color:#4caf50;">🎉 Correct! You guessed it in ${attempts} attempts.</span>`;
+        guessInput.disabled = true;
+        guessBtn.style.display = 'none';
+        resetBtn.style.display = 'inline-block';
+        gameOver = true;
+      } else if (guess < secretNumber) {
+        message.textContent = '⬆️ Too low! Try a higher number.';
+      } else {
+        message.textContent = '⬇️ Too high! Try a lower number.';
+      }
+      guessInput.value = '';
+      guessInput.focus();
+    }
+
+    guessBtn.addEventListener('click', checkGuess);
+    guessInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') checkGuess();
+    });
+    resetBtn.addEventListener('click', resetGame);
+  </script>
+</body>
+</html>

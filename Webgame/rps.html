@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .game-container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      animation: pulse 2s infinite;
+    }
+
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      font-size: 1.2rem;
+    }
+
+    .choices {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+    }
+
+    .choice {
+      background: #ffffff30;
+      border: none;
+      padding: 20px 30px;
+      border-radius: 50%;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .choice:hover {
+      background: #ffffff50;
+      transform: scale(1.1);
+    }
+
+    .result {
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 10px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); color: #fff; }
+      50% { transform: scale(1.05); color: #f0db4f; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>✊ Rock ✋ Paper ✌️ Scissors</h1>
+
+    <div class="scoreboard">
+      <div>🧑 You: <span id="player-score">0</span></div>
+      <div>🤖 AI: <span id="ai-score">0</span></div>
+    </div>
+
+    <div class="choices">
+      <button class="choice" data-choice="rock">✊</button>
+      <button class="choice" data-choice="paper">✋</button>
+      <button class="choice" data-choice="scissors">✌️</button>
+    </div>
+
+    <div class="result" id="result">Make your move!</div>
+  </div>
+
+  <script>
+    const choices = document.querySelectorAll('.choice');
+    const resultDiv = document.getElementById('result');
+    const playerScoreSpan = document.getElementById('player-score');
+    const aiScoreSpan = document.getElementById('ai-score');
+
+    let playerScore = 0;
+    let aiScore = 0;
+
+    choices.forEach(button => {
+      button.addEventListener('click', () => {
+        const playerChoice = button.dataset.choice;
+        const aiChoice = getAIChoice();
+        const result = getWinner(playerChoice, aiChoice);
+        displayResult(result, playerChoice, aiChoice);
+      });
+    });
+
+    function getAIChoice() {
+      const options = ['rock', 'paper', 'scissors'];
+      return options[Math.floor(Math.random() * 3)];
+    }
+
+    function getWinner(player, ai) {
+      if (player === ai) return 'draw';
+      if (
+        (player === 'rock' && ai === 'scissors') ||
+        (player === 'paper' && ai === 'rock') ||
+        (player === 'scissors' && ai === 'paper')
+      ) return 'player';
+      return 'ai';
+    }
+
+    function displayResult(winner, player, ai) {
+      let message = `🧑 ${player.toUpperCase()} vs 🤖 ${ai.toUpperCase()}<br>`;
+      if (winner === 'draw') {
+        message += "<span style='color: #f0db4f;'>It's a Draw!</span>";
+      } else if (winner === 'player') {
+        playerScore++;
+        playerScoreSpan.textContent = playerScore;
+        message += "<span style='color: #4CAF50;'>You Win!</span>";
+      } else {
+        aiScore++;
+        aiScoreSpan.textContent = aiScore;
+        message += "<span style='color: #F44336;'>AI Wins!</span>";
+      }
+      resultDiv.innerHTML = message;
+    }
+  </script>
+</body>
+</html>
