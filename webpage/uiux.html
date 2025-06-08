@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tech-CRAFTERS | Landing Page</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #fff;
+      color: #333;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background: url('https://source.unsplash.com/1600x900/?technology,ai') no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      color: white;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      padding: 20px;
+    }
+
+    .hero-content h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-content span {
+      color: #00ffe7;
+    }
+
+    .hero-content p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      background: #00ffe7;
+      color: black;
+      border: none;
+      border-radius: 25px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #00d6bd;
+      transform: scale(1.1);
+    }
+
+    section.gallery {
+      padding: 60px 20px;
+      background: #f0f0f0;
+      text-align: center;
+    }
+
+    section.gallery h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 0 20px;
+    }
+
+    .images img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .images img:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      padding: 40px 20px;
+      background: #222;
+      color: #ccc;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero-content h1 { font-size: 2rem; }
+      .hero-content p { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="hero-content">
+      <h1>Welcome to <span>Tech-CRAFTERS</span></h1>
+      <p>We create modern, smart, and powerful digital products for you.</p>
+      <a href="#gallery" class="btn">Explore</a>
+    </div>
+  </header>
+
+  <section class="gallery" id="gallery">
+    <h2>Our Works</h2>
+    <div class="images">
+      <img src="https://source.unsplash.com/featured/?website" alt="Web Design" />
+      <img src="https://source.unsplash.com/featured/?app" alt="App Design" />
+      <img src="https://source.unsplash.com/featured/?technology" alt="Tech Image" />
+      <img src="https://source.unsplash.com/featured/?coding" alt="Coding Image" />
+      <img src="https://source.unsplash.com/featured/?digital" alt="Digital World" />
+      <img src="https://source.unsplash.com/featured/?ai" alt="AI Innovation" />
+    </div>
+  </section>
+
+  <footer id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: techcrafters@email.com</p>
+    <p>&copy; 2025 Tech-CRAFTERS. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
