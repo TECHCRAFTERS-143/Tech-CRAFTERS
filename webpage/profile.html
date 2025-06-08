@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jagathish Portfolio</title>
+<style>
+  /* Reset */
+  * {
+    margin: 0; padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  html {
+    scroll-padding-top: 70px; /* Prevent nav from covering sections on scroll */
+  }
+
+  body {
+    background: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color: #eee;
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Overlay for readability and increased brightness */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(20, 20, 20, 0.75); /* lighter and more transparent */
+    backdrop-filter: brightness(1.15);
+    z-index: -1;
+  }
+
+  /* Header */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(8px);
+    color: #00ffd5;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10000;
+    box-shadow: 0 2px 12px #00ffd5cc;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-shadow: 0 0 12px #00ffd5;
+    user-select: none;
+    cursor: default;
+    transition: color 0.3s ease;
+  }
+  header h1:hover {
+    color: #00ff88;
+  }
+
+  nav {
+    display: flex;
+    gap: 1.3rem;
+  }
+
+  nav a {
+    color: #00ffd5;
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+    padding: 0.3rem 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  nav a::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0;
+    height: 2px;
+    background: #00ffd5;
+    transition: 0.3s ease;
+  }
+
+  nav a:hover::after {
+    width: 100%;
+  }
+
+  nav a:hover {
+    color: #00ff88;
+    text-shadow: 0 0 8px #00ff88;
+  }
+
+  /* Hamburger menu */
+  #menuToggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    width: 30px;
+    height: 25px;
+    justify-content: space-between;
+  }
+
+  #menuToggle span {
+    background: #00ffd5;
+    height: 3px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  /* Animate hamburger to X when open */
+  #menuToggle.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 6px);
+  }
+  #menuToggle.open span:nth-child(2) {
+    opacity: 0;
+  }
+  #menuToggle.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -6px);
+  }
+
+  @media (max-width: 768px) {
+    nav {
+      display: none;
+      position: fixed;
+      top: 60px; right: 0;
+      background: rgba(0,0,0,0.98);
+      width: 220px;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      border-radius: 0 0 0 10px;
+      box-shadow: -5px 5px 15px #00ffd5cc;
+      z-index: 10001;
+      transition: transform 0.4s ease;
+      transform: translateX(100%);
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+    }
+
+    nav.show {
+      display: flex;
+      transform: translateX(0);
+    }
+
+    #menuToggle {
+      display: flex;
+    }
+  }
+
+  main {
+    max-width: 900px;
+    margin: 6.5rem auto 3rem;
+    background: rgba(0,0,0,0.75);
+    padding: 2rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 0 30px #00ffd5cc;
+  }
+
+  section {
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation-fill-mode: forwards;
+    animation-duration: 0.7s;
+    animation-timing-function: ease-out;
+  }
+
+  section:nth-child(1) {
+    animation-name: fadeUp;
+    animation-delay: 0.2s;
+  }
+  section:nth-child(2) {
+    animation-name: fadeUp;
+    animation-delay: 0.4s;
+  }
+  section:nth-child(3) {
+    animation-name: fadeUp;
+    animation-delay: 0.6s;
+  }
+  section:nth-child(4) {
+    animation-name: fadeUp;
+    animation-delay: 0.8s;
+  }
+  section:nth-child(5) {
+    animation-name: fadeUp;
+    animation-delay: 1s;
+  }
+  section:nth-child(6) {
+    animation-name: fadeUp;
+    animation-delay: 1.2s;
+  }
+  section:nth-child(7) {
+    animation-name: fadeUp;
+    animation-delay: 1.4s;
+  }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h2 {
+    color: #00ffd5;
+    margin-bottom: 1rem;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    font-size: 2.1rem;
+    text-shadow: 0 0 16px #00ffd5;
+  }
+
+  p, ul, li {
+    font-size: 1.15rem;
+    color: #ddd;
+    margin-bottom: 0.85rem;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* Skills as images with hover 3D effect and glow */
+  #skills li {
+    background: rgba(0,255,213,0.12);
+    border-radius: 15px;
+    box-shadow: 0 0 15px #00ffd5cc;
+    padding: 15px 18px;
+    width: 120px;
+    text-align: center;
+    cursor: default;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    user-select: none;
+    filter: drop-shadow(0 0 8px #00ffd5cc);
+  }
+
+  #skills li:hover {
+    transform: rotateY(20deg) scale(1.15) translateY(-12px);
+    box-shadow: 0 0 40px #00fffddd, 0 0 20px #00ffd5cc inset;
+    filter: drop-shadow(0 0 18px #00ffd5cc);
+  }
+
+  #skills img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 8px;
+    object-fit: contain;
+    transition: filter 0.3s ease;
+  }
+
+  #skills span {
+    display: block;
+    font-weight: 700;
+    color: #00ffd5;
+    text-shadow: 0 0 6px #00ffd5cc;
+    user-select: none;
+  }
+
+  /* Achievement & extracurricular with images and smooth hover */
+  #achievements li, #extracurriculars li {
+    background: rgba(0,255,213,0.15);
+    padding: 1.2rem 1rem;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #00ffd5cc;
+    flex: 1 1 260px;
+    font-weight: 600;
+    text-align: center;
+    cursor: default;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+
+  #achievements li:hover, #extracurriculars li:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 45px #00ffd5cc;
+  }
+
+  #achievements img, #extracurriculars img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    object-fit: cover;
+    filter: drop-shadow(0 0 8px #00ffd5cc);
+    transition: filter 0.3s ease;
+  }
+
+  #achievements li:hover img, #extracurriculars li:hover img {
+    filter: drop-shadow(0 0 18px #00ffd5cc);
+  }
+
+  /* Contact links style with subtle glow and bounce on hover */
+  #contact a {
+    color: #00ffd5;
+    font-weight: 700;
+    text-decoration: none;
+    margin-right: 1.8rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+    user-select: none;
+  }
+
+  #contact a:hover {
+    color: #00ff88;
+    text-shadow: 0 0 12px #00ff88;
+    transform: translateY(-3px);
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    color: #00ffd5aa;
+    padding: 1.5rem 1rem;
+    font-size: 0.9rem;
+    border-top: 1px solid #00ffd5aa;
+    user-select: none;
+    letter-spacing: 1.5px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Jagathish</h1>
+  <div id="menuToggle" aria-label="Toggle menu" role="button" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+  <nav id="navbar" aria-label="Primary Navigation">
+    <a href="#home">Home</a>
+    <a href="#introduction">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#achievements">Achievements</a>
+    <a href="#extracurriculars">Extracurriculars</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section id="home">
+    <h2>Welcome to My Portfolio</h2>
+    <p>Hello! I am Jagathish, a passionate AI & Data Science student and web developer. I enjoy building creative projects with clean code and beautiful design.</p>
+    <img src="https://avatars.githubusercontent.com/u/65165296?v=4" alt="Profile Picture" style="width:150px; border-radius:50%; box-shadow: 0 0 18px #00ffd5; display:block; margin: 1rem auto;">
+  </section>
+
+  <section id="introduction">
+    <h2>About Me</h2>
+    <p>I am a 2nd-year AI & Data Science undergraduate at CK College of Engineering and Technology. I have a strong interest in full stack development, game development, and machine learning. Always eager to learn and collaborate on impactful projects.</p>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <ul>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" />
+        <span>Python</span>
+      </li>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" />
+        <span>HTML5</span>
+      </li>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" />
+        <span>CSS3</span>
+      </li>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" />
+        <span>JavaScript</span>
+      </li>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg" alt="Flask" />
+        <span>Flask</span>
+      </li>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" />
+        <span>MongoDB</span>
+      </li>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" />
+        <span>Git</span>
+      </li>
+      <li>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" />
+        <span>React</span>
+      </li>
+    </ul>
+  </section>
+
+  <section id="achievements">
+    <h2>Achievements</h2>
+    <ul>
+      <li>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gold_medal_icon.svg/120px-Gold_medal_icon.svg.png" alt="Gold Medal" />
+        Winner - AI Hackathon 2025
+      </li>
+      <li>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Trophy_icon.svg/120px-Trophy_icon.svg.png" alt="Trophy" />
+        Top Performer - CK College Coding Challenge 2024
+      </li>
+      <li>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Document_icon.svg/120px-Document_icon.svg.png" alt="Research Paper" />
+        Published Research Paper on Sentiment Analysis
+      </li>
+    </ul>
+  </section>
+
+  <section id="extracurriculars">
+    <h2>Extracurriculars</h2>
+    <ul>
+      <li>
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Club" />
+        TechCrafters Club Member
+      </li>
+      <li>
+        <img src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png" alt="Volunteer" />
+        Volunteer at Local Coding Workshops
+      </li>
+      <li>
+        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" alt="Open Source" />
+        Contributor to Open Source Projects
+      </li>
+    </ul>
+  </section>
+
+  <section id="projects">
+    <h2>Projects</h2>
+    <ul>
+      <li>AI-Powered Chatbot: Developed a chatbot using Python and NLP techniques.</li>
+      <li>Sign Language Recognition System using Computer Vision.</li>
+      <li>WebGames Collection with HTML5, CSS3, and JavaScript.</li>
+      <li>Instagram Sentiment Analyzer with Flask and TextBlob.</li>
+    </ul>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <p>Reach me on LinkedIn or via Email:</p>
+    <p>
+      <a href="https://linkedin.com/in/jagathish67" target="_blank" rel="noopener noreferrer">LinkedIn</a> | 
+      <a href="mailto:jagathish67@example.com">Email</a>
+    </p>
+  </section>
+</main>
+
+<footer>
+  &copy; 2025 Jagathish | Designed & Developed by Jagathish
+</footer>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const nav = document.getElementById('navbar');
+
+  menuToggle.addEventListener('click', () => {
+    nav.classList.toggle('show');
+    menuToggle.classList.toggle('open');
+  });
+
+  // Close nav menu when link clicked (mobile)
+  document.querySelectorAll('#navbar a').forEach(link => {
+    link.addEventListener('click', () => {
+      if(nav.classList.contains('show')){
+        nav.classList.remove('show');
+        menuToggle.classList.remove('open');
+      }
+    });
+  });
+
+  // Keyboard accessibility for menu toggle
+  menuToggle.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      menuToggle.click();
+    }
+  });
+</script>
+
+</body>
+</html>
