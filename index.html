@@ -260,6 +260,44 @@
         font-size: 2rem;
       }
     }
+    .section-link {
+  color: #00f7ff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.section-link:hover {
+  color: #03d6d6;
+  text-decoration: underline;
+}
+.grid {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.card {
+  background: #222;
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 280px;
+  color: white;
+  text-decoration: none; /* Remove underline */
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+  display: block; /* So it behaves like a block */
+  transition: transform 0.3s, background 0.3s;
+}
+
+.card:hover {
+  background: #00f7ff;
+  color: #000;
+  transform: scale(1.05);
+}
+
+.card h3, .card p {
+  margin-bottom: 1rem;
+}
+
     /* CSS Code Ends Here */
   </style>
 </head>
@@ -321,18 +359,20 @@
   </section>
 
   <section id="webpages">
-    <h2>Web Pages</h2>
-    <div class="grid">
-      <div class="card">
-        <h3>Personal Portfolio Templates</h3>
-        <p>Sleek and customizable templates to showcase your professional portfolio.</p>
-      </div>
-      <div class="card">
-        <h3>Blog UI with Comment Section</h3>
-        <p>A modern blog user interface complete with interactive comment functionalities.</p>
-      </div>
-    </div>
-  </section>
+  <h2><a href="webpage/webpages.html" class="section-link">Web Pages</a></h2>
+  <div class="grid">
+    <a href="personal-portfolio.html" class="card">
+      <h3>Personal Portfolio Templates</h3>
+      <p>Sleek and customizable templates to showcase your professional portfolio.</p>
+    </a>
+
+    <a href="blog-ui.html" class="card">
+      <h3>Blog UI with Comment Section</h3>
+      <p>A modern blog user interface complete with interactive comment functionalities.</p>
+    </a>
+  </div>
+</section>
+
 
   <section id="webapps">
     <h2>Web Applications</h2>
