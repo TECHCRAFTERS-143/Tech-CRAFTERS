@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Signup | Tech-CRAFTERS</title>
+
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 360px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      transition: all 0.4s ease-in-out;
+      color: #fff;
+    }
+
+    .container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #00fff7;
+      text-shadow: 0 0 10px #00fff7;
+    }
+
+    .input-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      border: none;
+      outline: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    .input-box input::placeholder {
+      color: #ddd;
+    }
+
+    .input-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #00fff7;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #00fff7;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #00ccc5;
+    }
+
+    .toggle-link {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .toggle-link span {
+      color: #00fff7;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .social-icons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .social-icons i {
+      font-size: 1.3rem;
+      color: #fff;
+      margin: 0 10px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .social-icons i:hover {
+      transform: scale(1.3);
+      color: #00fff7;
+    }
+
+    @media (max-width: 400px) {
+      .container {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Box -->
+  <div class="container" id="loginBox">
+    <h2><i class="fas fa-lock"></i> Login</h2>
+    <div class="social-icons">
+      <i class="fab fa-facebook-f"></i>
+      <i class="fab fa-google"></i>
+      <i class="fab fa-github"></i>
+    </div>
+    <div class="input-box">
+      <i class="fas fa-user"></i>
+      <input type="text" placeholder="Username" />
+    </div>
+    <div class="input-box">
+      <i class="fas fa-lock"></i>
+      <input type="password" placeholder="Password" />
+    </div>
+    <button class="btn">Login</button>
+    <div class="toggle-link">
+      Don't have an account? <span onclick="toggleForms()">Signup</span>
+    </div>
+  </div>
+
+  <!-- Signup Box -->
+  <div class="container hidden" id="signupBox">
+    <h2><i class="fas fa-user-plus"></i> Signup</h2>
+    <div class="social-icons">
+      <i class="fab fa-facebook-f"></i>
+      <i class="fab fa-google"></i>
+      <i class="fab fa-github"></i>
+    </div>
+    <div class="input-box">
+      <i class="fas fa-user"></i>
+      <input type="text" placeholder="Username" />
+    </div>
+    <div class="input-box">
+      <i class="fas fa-envelope"></i>
+      <input type="email" placeholder="Email" />
+    </div>
+    <div class="input-box">
+      <i class="fas fa-lock"></i>
+      <input type="password" placeholder="Password" />
+    </div>
+    <button class="btn">Signup</button>
+    <div class="toggle-link">
+      Already have an account? <span onclick="toggleForms()">Login</span>
+    </div>
+  </div>
+
+  <!-- JS toggle -->
+  <script>
+    const loginBox = document.getElementById('loginBox');
+    const signupBox = document.getElementById('signupBox');
+
+    function toggleForms() {
+      loginBox.classList.toggle('hidden');
+      signupBox.classList.toggle('hidden');
+    }
+  </script>
+
+</body>
+</html>
