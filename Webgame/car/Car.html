@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Game</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js for sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Max width for larger screens */
+            height: 600px;
+            background-color: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: calc(100% - 80px); /* Adjust height for controls */
+            background-color: #555;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .controls {
+            position: relative; /* Changed from absolute to relative to fit into flex layout */
+            width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #222;
+            padding: 10px 0;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        .game-button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .game-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #brakeButton {
+            background-color: #f44336;
+        }
+
+        #brakeButton:hover {
+            background-color: #da190b;
+        }
+
+        .speedometer {
+            background-color: #000;
+            color: #0f0;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 2px solid #0f0;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        /* Message Box Styling */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            text-align: center;
+        }
+
+        .message-box button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .message-box button:hover {
+            background-color: #45a049;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .game-container {
+                height: 90vh; /* Use a percentage of viewport height */
+                width: 95vw;
+            }
+
+            .controls {
+                flex-direction: row; /* Keep buttons in a row for mobile too if space permits, or column if needed */
+                flex-wrap: wrap; /* Allow buttons to wrap */
+                height: auto; /* Adjust height based on content */
+                padding: 10px;
+            }
+
+            .game-button, .speedometer {
+                margin: 5px; /* Add some margin for smaller screens */
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+            .speedometer {
+                min-width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div class="controls">
+            <button id="startButton" class="game-button">Start Game</button>
+            <div id="speedometer" class="speedometer">0 KM/H</div>
+            <button id="brakeButton" class="game-button">Brake</button>
+        </div>
+    </div>
+
+    <!-- Message Box HTML -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="messageBoxOkButton">OK</button>
+    </div>
+
+    <script>
+        // Global variables for Firebase and authentication, provided by the Canvas environment.
+        // These are accessed here but Firebase specific functionality (like Firestore) is not
+        // implemented in this version of the game as per the current user request.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startButton = document.getElementById('startButton');
+        const brakeButton = document.getElementById('brakeButton');
+        const speedometerDisplay = document.getElementById('speedometer');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const messageBoxOkButton = document.getElementById('messageBoxOkButton');
+
+        let animationFrameId; // To store the requestAnimationFrame ID
+
+        // Game state variables
+        let gameStarted = false;
+        let car = {
+            x: 0, // Car's X position
+            y: 0, // Car's Y position
+            width: 150,
+            height: 75,
+            speed: 0, // Current speed in game units (will be converted to KM/H)
+            maxSpeed: 100, // Max speed in game units
+            acceleration: 0.05,
+            deceleration: 0.02,
+            brakingPower: 0.2,
+            driftFactor: 0.05, // How much the car drifts sideways
+            targetX: 0 // Target X position for smooth movement
+        };
+
+        let roadScrollSpeed = 0; // Speed at which the road scrolls
+        let roadY = 0; // Y position for the road pattern
+        let backgroundY = 0; // Y position for the city background
+
+        // Image assets
+        const carImage = new Image();
+        carImage.src = 'car.png'; // Path to the uploaded car image
+        carImage.onerror = () => showMessage('Error loading car image. Please check the image path.');
+
+        const wheelImage = new Image();
+        wheelImage.src = 'wheel.png'; // Path to the uploaded wheel image
+        wheelImage.onerror = () => showMessage('Error loading wheel image. Please check the image path.');
+
+        const roadImage = new Image();
+        roadImage.src = 'road.jpg'; // Path to the uploaded road image
+        roadImage.onerror = () => showMessage('Error loading road image. Please check the image path.');
+
+        const cityBackground = new Image();
+        cityBackground.src = 'back.jpg'; // Path to the uploaded city background
+        cityBackground.onerror = () => showMessage('Error loading city background image. Please check the image path.');
+
+
+        // Sound effects using Tone.js
+        let carStartSynth, engineHumSynth;
+        let brakeNoiseSynth;
+
+        function setupAudio() {
+            // Car Start Sound: A simple sine wave burst
+            carStartSynth = new Tone.Synth().toDestination();
+            carStartSynth.volume.value = -10; // Reduce volume
+
+            // Engine Hum: A simple oscillator that changes frequency with speed
+            engineHumSynth = new Tone.Oscillator({
+                frequency: 50, // Base frequency
+                type: "sine",
+                volume: -20 // Very low volume for hum
+            }).toDestination();
+            engineHumSynth.start();
+            engineHumSynth.stop(); // Start stopped
+
+            // Brake Noise: White noise for a brake sound
+            brakeNoiseSynth = new Tone.NoiseSynth({
+                noise: {
+                    type: "white"
+                },
+                envelope: {
+                    attack: 0.01,
+                    decay: 0.3,
+                    sustain: 0.1,
+                    release: 0.5
+                }
+            }).toDestination();
+            brakeNoiseSynth.volume.value = -15; // Reduce volume
+        }
+
+        // Initialize audio context on first user interaction
+        Tone.start().then(() => {
+            setupAudio();
+            showMessage('Audio context started! Click "Start Game" to begin.');
+        }).catch(e => {
+            showMessage('Error starting audio context: ' + e.message);
+        });
+
+        function showMessage(message) {
+            messageText.textContent = message;
+            messageBox.style.display = 'block';
+        }
+
+        messageBoxOkButton.onclick = () => {
+            messageBox.style.display = 'none';
+        };
+
+        // Keyboard input handling
+        const keys = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+            Space: false // For brake
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (keys.hasOwnProperty(e.code)) {
+                keys[e.code] = true;
+                e.preventDefault(); // Prevent default browser actions for arrow keys/space
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (keys.hasOwnProperty(e.code)) {
+                keys[e.code] = false;
+            }
+        });
+
+        // Touch input handling for mobile devices
+        function handleTouchMove(e) {
+            if (!gameStarted) return;
+            e.preventDefault(); // Prevent scrolling
+
+            const touchX = e.touches[0].clientX;
+            const canvasRect = canvas.getBoundingClientRect();
+            const relativeX = touchX - canvasRect.left;
+
+            // Map touchX to car.targetX within the canvas width
+            car.targetX = relativeX - car.width / 2;
+            car.targetX = Math.max(0, Math.min(canvas.width - car.width, car.targetX));
+        }
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (!gameStarted) return;
+            e.preventDefault();
+            handleTouchMove(e);
+        }, { passive: false }); // passive: false to allow preventDefault
+
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+        // Game loop functions
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            car.x = (canvas.width - car.width) / 2; // Center the car initially
+            car.y = canvas.height - car.height - 20; // Position car near bottom
+            car.targetX = car.x;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Initial canvas resize
+
+        function drawRoad() {
+            // Draw multiple road segments to create a continuous scrolling effect
+            const segmentHeight = roadImage.height / 2; // Use half of the road image height for segments
+            const numSegments = Math.ceil(canvas.height / segmentHeight) + 1;
+
+            for (let i = 0; i < numSegments; i++) {
+                ctx.drawImage(
+                    roadImage,
+                    0, // Source X
+                    0, // Source Y
+                    roadImage.width, // Source Width
+                    roadImage.height, // Source Height
+                    0, // Destination X
+                    (roadY + i * segmentHeight) % (canvas.height + segmentHeight) - segmentHeight, // Destination Y
+                    canvas.width, // Destination Width
+                    segmentHeight * (canvas.width / roadImage.width) // Maintain aspect ratio for height
+                );
+            }
+        }
+
+        function drawCityBackground() {
+            // Draw city background, scaled to fit width and positioned at the top
+            ctx.drawImage(cityBackground, 0, backgroundY, canvas.width, canvas.height * 0.5); // Adjust height for background
+        }
+
+        function drawCar() {
+            // Draw car
+            ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
+
+            // Draw wheels (simplified: front and back, rotating)
+            const wheelWidth = car.width * 0.15;
+            const wheelHeight = car.height * 0.5;
+            const wheelOffset = car.width * 0.08; // Offset from car edges
+
+            // Calculate rotation angle based on speed
+            const rotationAngle = (roadScrollSpeed * 0.1) % (2 * Math.PI); // Adjust multiplier for rotation speed
+
+            // Front wheel
+            ctx.save();
+            ctx.translate(car.x + wheelOffset + wheelWidth / 2, car.y + car.height - wheelHeight / 2);
+            ctx.rotate(rotationAngle);
+            ctx.drawImage(wheelImage, -wheelWidth / 2, -wheelHeight / 2, wheelWidth, wheelHeight);
+            ctx.restore();
+
+            // Back wheel
+            ctx.save();
+            ctx.translate(car.x + car.width - wheelOffset - wheelWidth / 2, car.y + car.height - wheelHeight / 2);
+            ctx.rotate(rotationAngle);
+            ctx.drawImage(wheelImage, -wheelWidth / 2, -wheelHeight / 2, wheelWidth, wheelHeight);
+            ctx.restore();
+        }
+
+        function updateGame() {
+            if (!gameStarted) return;
+
+            // Car speed update
+            if (keys.ArrowUp) {
+                car.speed = Math.min(car.maxSpeed, car.speed + car.acceleration);
+            } else if (keys.ArrowDown) {
+                car.speed = Math.max(0, car.speed - car.deceleration);
+            } else if (keys.Space) { // Brake
+                car.speed = Math.max(0, car.speed - car.brakingPower);
+                if (car.speed > 0 && !brakeNoiseSynth.context.state === 'running') {
+                    // Play brake sound only if not already playing and car is moving
+                    brakeNoiseSynth.triggerAttackRelease("0.5");
+                }
+            } else {
+                // Natural deceleration when no keys pressed
+                car.speed = Math.max(0, car.speed - car.deceleration * 0.5);
+            }
+
+            // Horizontal movement (car.x)
+            if (keys.ArrowLeft) {
+                car.targetX -= 5; // Direct movement
+            }
+            if (keys.ArrowRight) {
+                car.targetX += 5; // Direct movement
+            }
+
+            // Smooth horizontal movement with drift factor
+            car.x += (car.targetX - car.x) * car.driftFactor;
+
+            // Clamp car.x within canvas boundaries
+            car.x = Math.max(0, Math.min(canvas.width - car.width, car.x));
+
+            // Road and background scrolling
+            roadScrollSpeed = car.speed * 0.5; // Road scrolls faster with higher speed
+            roadY = (roadY + roadScrollSpeed) % canvas.height;
+            backgroundY = (backgroundY + roadScrollSpeed * 0.1) % canvas.height; // Background scrolls slower
+
+            // Update engine hum pitch based on speed
+            const engineFreq = 50 + car.speed * 2; // Base + speed-based frequency
+            if (engineHumSynth) {
+                engineHumSynth.frequency.value = engineFreq;
+            }
+
+            // Start/Stop engine hum
+            if (car.speed > 1 && engineHumSynth.state === 'stopped') {
+                engineHumSynth.start();
+            } else if (car.speed <= 1 && engineHumSynth.state === 'started') {
+                engineHumSynth.stop();
+            }
+
+            // Update speedometer
+            const speedKmH = Math.floor(car.speed); // 1 game unit = 1 KM/H for display
+            speedometerDisplay.textContent = `${speedKmH} KM/H`;
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+            drawCityBackground();
+            drawRoad();
+            drawCar();
+            updateGame();
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        startButton.addEventListener('click', () => {
+            if (!gameStarted) {
+                gameStarted = true;
+                car.speed = 0; // Reset speed
+                car.x = (canvas.width - car.width) / 2; // Recenter car
+                car.targetX = car.x;
+                startButton.disabled = true;
+                brakeButton.disabled = false;
+
+                if (carStartSynth) {
+                    carStartSynth.triggerAttackRelease("C4", "0.5"); // Play C4 for 0.5 seconds
+                }
+
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId); // Stop any existing loop
+                }
+                gameLoop(); // Start new game loop
+            }
+        });
+
+        brakeButton.addEventListener('click', () => {
+            if (gameStarted) {
+                keys.Space = true; // Simulate space bar press for brake
+                // Set a timeout to release the brake after a short period, or allow continuous hold
+                setTimeout(() => {
+                    keys.Space = false;
+                }, 200); // Quick tap for brake
+            }
+        });
+
+        // Initialize game when all images are loaded
+        let imagesLoaded = 0;
+        const totalImages = 4; // Car, Wheel, Road, City
+
+        const imageLoadHandler = () => {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+                // All images loaded, enable start button
+                startButton.disabled = false;
+                showMessage('Game ready! Press "Start Game" or use arrow keys to control.');
+            }
+        };
+
+        carImage.onload = imageLoadHandler;
+        wheelImage.onload = imageLoadHandler;
+        roadImage.onload = imageLoadHandler;
+        cityBackground.onload = imageLoadHandler;
+
+        // Initially disable buttons until assets are loaded and audio context is ready
+        startButton.disabled = true;
+        brakeButton.disabled = true;
+
+        // Fallback for image loading if `onerror` isn't triggered or if CDN issues
+        // If images don't load, the game might still start but with missing visuals.
+        // The error messages help identify the issue.
+    </script>
+</body>
+</html>
