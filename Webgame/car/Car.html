@@ -46,7 +46,7 @@
         }
 
         .controls {
-            position: relative; /* Changed from absolute to relative to fit into flex layout */
+            position: relative;
             width: 100%;
             height: 80px;
             display: flex;
@@ -202,10 +202,11 @@
             width: 150,
             height: 75,
             speed: 0, // Current speed in game units (will be converted to KM/H)
-            maxSpeed: 100, // Max speed in game units
-            acceleration: 0.05,
-            deceleration: 0.02,
-            brakingPower: 0.2,
+            minSpeed: 10, // Minimum speed for the game loop once started
+            maxSpeed: 199, // Max speed in game units
+            acceleration: 0.3, // Increased acceleration
+            deceleration: 0.1, // Adjusted deceleration
+            brakingPower: 0.5, // Stronger braking power
             driftFactor: 0.05, // How much the car drifts sideways
             targetX: 0 // Target X position for smooth movement
         };
@@ -216,19 +217,19 @@
 
         // Image assets
         const carImage = new Image();
-        carImage.src = 'car.png'; // Path to the uploaded car image
+        carImage.src = 'car.png'; // Updated path to the uploaded car image
         carImage.onerror = () => showMessage('Error loading car image. Please check the image path.');
 
         const wheelImage = new Image();
-        wheelImage.src = 'wheel.png'; // Path to the uploaded wheel image
+        wheelImage.src = 'wheel.png'; // Updated path to the uploaded wheel image
         wheelImage.onerror = () => showMessage('Error loading wheel image. Please check the image path.');
 
         const roadImage = new Image();
-        roadImage.src = 'road.jpg'; // Path to the uploaded road image
+        roadImage.src = 'road.jpg'; // Updated path to the uploaded road image
         roadImage.onerror = () => showMessage('Error loading road image. Please check the image path.');
 
         const cityBackground = new Image();
-        cityBackground.src = 'back.jpg'; // Path to the uploaded city background
+        cityBackground.src = 'back.jpg'; // Updated path to the uploaded city background
         cityBackground.onerror = () => showMessage('Error loading city background image. Please check the image path.');
 
 
@@ -340,28 +341,58 @@
 
         function drawRoad() {
             // Draw multiple road segments to create a continuous scrolling effect
-            const segmentHeight = roadImage.height / 2; // Use half of the road image height for segments
-            const numSegments = Math.ceil(canvas.height / segmentHeight) + 1;
-
-            for (let i = 0; i < numSegments; i++) {
-                ctx.drawImage(
-                    roadImage,
-                    0, // Source X
-                    0, // Source Y
-                    roadImage.width, // Source Width
-                    roadImage.height, // Source Height
-                    0, // Destination X
-                    (roadY + i * segmentHeight) % (canvas.height + segmentHeight) - segmentHeight, // Destination Y
-                    canvas.width, // Destination Width
-                    segmentHeight * (canvas.width / roadImage.width) // Maintain aspect ratio for height
-                );
-            }
+            // We draw two copies of the road image and scroll them to create the infinite effect
+            ctx.drawImage(
+                roadImage,
+                0,
+                0,
+                roadImage.width,
+                roadImage.height,
+                0,
+                roadY,
+                canvas.width,
+                canvas.height
+            );
+            ctx.drawImage(
+                roadImage,
+                0,
+                0,
+                roadImage.width,
+                roadImage.height,
+                0,
+                roadY - canvas.height, // Draw second image above the first
+                canvas.width,
+                canvas.height
+            );
         }
 
         function drawCityBackground() {
             // Draw city background, scaled to fit width and positioned at the top
-            ctx.drawImage(cityBackground, 0, backgroundY, canvas.width, canvas.height * 0.5); // Adjust height for background
+            // Draw two copies of the background image and scroll them
+            ctx.drawImage(
+                cityBackground,
+                0,
+                0,
+                cityBackground.width,
+                cityBackground.height,
+                0,
+                backgroundY,
+                canvas.width,
+                canvas.height * 0.5 // Adjust height for background
+            );
+            ctx.drawImage(
+                cityBackground,
+                0,
+                0,
+                cityBackground.width,
+                cityBackground.height,
+                0,
+                backgroundY - canvas.height * 0.5, // Draw second image above the first
+                canvas.width,
+                canvas.height * 0.5
+            );
         }
+
 
         function drawCar() {
             // Draw car
@@ -373,7 +404,7 @@
             const wheelOffset = car.width * 0.08; // Offset from car edges
 
             // Calculate rotation angle based on speed
-            const rotationAngle = (roadScrollSpeed * 0.1) % (2 * Math.PI); // Adjust multiplier for rotation speed
+            const rotationAngle = (roadScrollSpeed * 0.05) % (2 * Math.PI); // Adjusted multiplier for rotation speed
 
             // Front wheel
             ctx.save();
@@ -397,24 +428,31 @@
             if (keys.ArrowUp) {
                 car.speed = Math.min(car.maxSpeed, car.speed + car.acceleration);
             } else if (keys.ArrowDown) {
-                car.speed = Math.max(0, car.speed - car.deceleration);
+                car.speed = Math.max(car.minSpeed, car.speed - car.deceleration); // Cannot go below minSpeed
             } else if (keys.Space) { // Brake
-                car.speed = Math.max(0, car.speed - car.brakingPower);
-                if (car.speed > 0 && !brakeNoiseSynth.context.state === 'running') {
+                car.speed = Math.max(0, car.speed - car.brakingPower); // Can brake to 0
+                if (car.speed > 0 && brakeNoiseSynth.state === 'stopped') {
                     // Play brake sound only if not already playing and car is moving
                     brakeNoiseSynth.triggerAttackRelease("0.5");
                 }
             } else {
-                // Natural deceleration when no keys pressed
-                car.speed = Math.max(0, car.speed - car.deceleration * 0.5);
+                // Natural deceleration when no keys pressed, but not below minSpeed if game is running
+                if (car.speed > car.minSpeed) {
+                    car.speed = Math.max(car.minSpeed, car.speed - car.deceleration * 0.5);
+                }
+            }
+
+            // Ensure speed is always at least minSpeed if game is started and not braking to a halt
+            if (gameStarted && car.speed < car.minSpeed && !keys.Space) {
+                car.speed = car.minSpeed;
             }
 
             // Horizontal movement (car.x)
             if (keys.ArrowLeft) {
-                car.targetX -= 5; // Direct movement
+                car.targetX -= 10; // Increased horizontal movement speed
             }
             if (keys.ArrowRight) {
-                car.targetX += 5; // Direct movement
+                car.targetX += 10; // Increased horizontal movement speed
             }
 
             // Smooth horizontal movement with drift factor
@@ -424,20 +462,25 @@
             car.x = Math.max(0, Math.min(canvas.width - car.width, car.x));
 
             // Road and background scrolling
-            roadScrollSpeed = car.speed * 0.5; // Road scrolls faster with higher speed
+            roadScrollSpeed = car.speed * 0.8; // Road scrolls faster with higher speed
             roadY = (roadY + roadScrollSpeed) % canvas.height;
-            backgroundY = (backgroundY + roadScrollSpeed * 0.1) % canvas.height; // Background scrolls slower
+            if (roadY > canvas.height) roadY -= canvas.height; // Wrap around for infinite effect
+            if (roadY < 0) roadY += canvas.height;
+
+            backgroundY = (backgroundY + roadScrollSpeed * 0.1) % (canvas.height * 0.5); // Background scrolls slower
+            if (backgroundY > canvas.height * 0.5) backgroundY -= canvas.height * 0.5; // Wrap around
+            if (backgroundY < 0) backgroundY += canvas.height * 0.5;
 
             // Update engine hum pitch based on speed
-            const engineFreq = 50 + car.speed * 2; // Base + speed-based frequency
+            const engineFreq = 50 + car.speed * 4; // Base + speed-based frequency, increased multiplier
             if (engineHumSynth) {
                 engineHumSynth.frequency.value = engineFreq;
             }
 
             // Start/Stop engine hum
-            if (car.speed > 1 && engineHumSynth.state === 'stopped') {
+            if (car.speed > car.minSpeed - 5 && engineHumSynth.state === 'stopped') { // Start hum a bit before min speed
                 engineHumSynth.start();
-            } else if (car.speed <= 1 && engineHumSynth.state === 'started') {
+            } else if (car.speed <= car.minSpeed - 5 && engineHumSynth.state === 'started') {
                 engineHumSynth.stop();
             }
 
@@ -460,7 +503,7 @@
         startButton.addEventListener('click', () => {
             if (!gameStarted) {
                 gameStarted = true;
-                car.speed = 0; // Reset speed
+                car.speed = car.minSpeed; // Start at minimum speed
                 car.x = (canvas.width - car.width) / 2; // Recenter car
                 car.targetX = car.x;
                 startButton.disabled = true;
@@ -479,13 +522,19 @@
 
         brakeButton.addEventListener('click', () => {
             if (gameStarted) {
-                keys.Space = true; // Simulate space bar press for brake
-                // Set a timeout to release the brake after a short period, or allow continuous hold
-                setTimeout(() => {
-                    keys.Space = false;
-                }, 200); // Quick tap for brake
+                // Simulate continuous brake press
+                keys.Space = true;
             }
         });
+
+        // Release brake key on mouse up for brake button
+        brakeButton.addEventListener('mouseup', () => {
+            keys.Space = false;
+        });
+        brakeButton.addEventListener('touchend', () => {
+            keys.Space = false;
+        });
+
 
         // Initialize game when all images are loaded
         let imagesLoaded = 0;
@@ -509,9 +558,6 @@
         startButton.disabled = true;
         brakeButton.disabled = true;
 
-        // Fallback for image loading if `onerror` isn't triggered or if CDN issues
-        // If images don't load, the game might still start but with missing visuals.
-        // The error messages help identify the issue.
     </script>
 </body>
 </html>
