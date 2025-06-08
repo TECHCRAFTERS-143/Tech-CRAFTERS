@@ -8,24 +8,24 @@
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
     * {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
+      scroll-behavior: smooth;
       font-family: 'Poppins', sans-serif;
     }
 
     body {
-      background: #fff;
-      color: #333;
-      scroll-behavior: smooth;
+      background: #fdfdfd;
+      color: #222;
     }
 
     header {
-      background: url('https://source.unsplash.com/1600x900/?technology,ai') no-repeat center center/cover;
       height: 100vh;
+      background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
       display: flex;
-      justify-content: center;
       align-items: center;
-      text-align: center;
+      justify-content: center;
       position: relative;
       color: white;
     }
@@ -35,59 +35,70 @@
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
     }
 
     .hero-content {
+      text-align: center;
       position: relative;
       z-index: 1;
-      max-width: 700px;
-      padding: 20px;
+      animation: fadeIn 2s ease-out forwards;
     }
 
     .hero-content h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .hero-content span {
-      color: #00ffe7;
+      font-size: 3.5rem;
+      color: #00fff7;
+      text-shadow: 2px 2px 10px rgba(0,255,255,0.6);
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1.2s ease-out forwards 0.3s;
     }
 
     .hero-content p {
       font-size: 1.2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 30px;
+      color: #eee;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1.2s ease-out forwards 0.6s;
     }
 
     .btn {
       padding: 12px 30px;
-      background: #00ffe7;
-      color: black;
-      border: none;
-      border-radius: 25px;
+      background: #00fff7;
+      color: #000;
+      border-radius: 30px;
       font-weight: bold;
       text-decoration: none;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
+      box-shadow: 0 0 10px #00fff7;
+      opacity: 0;
+      animation: slideUp 1.2s ease-out forwards 0.9s;
     }
 
     .btn:hover {
-      background: #00d6bd;
+      background: #00cfc5;
+      box-shadow: 0 0 20px #00fff7;
       transform: scale(1.1);
     }
 
     section.gallery {
-      padding: 60px 20px;
-      background: #f0f0f0;
+      padding: 80px 20px;
+      background: #f7f7f7;
       text-align: center;
     }
 
     section.gallery h2 {
-      font-size: 2rem;
-      margin-bottom: 30px;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #333;
+      animation: fadeIn 2s ease-out forwards;
     }
 
     .images {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       padding: 0 20px;
     }
@@ -96,50 +107,79 @@
       width: 100%;
       height: 200px;
       object-fit: cover;
-      border-radius: 10px;
-      transition: transform 0.3s ease;
+      border-radius: 15px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: fadeIn 2s ease-in-out;
     }
 
     .images img:hover {
       transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
 
     footer {
-      padding: 40px 20px;
-      background: #222;
-      color: #ccc;
+      padding: 60px 20px;
+      background: #111;
+      color: #aaa;
       text-align: center;
+      font-size: 1rem;
     }
 
+    footer h2 {
+      color: #00fff7;
+      margin-bottom: 10px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
-      .hero-content h1 { font-size: 2rem; }
+      .hero-content h1 { font-size: 2.5rem; }
       .hero-content p { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
 
+  <!-- Hero Section -->
   <header>
     <div class="hero-content">
-      <h1>Welcome to <span>Tech-CRAFTERS</span></h1>
-      <p>We create modern, smart, and powerful digital products for you.</p>
-      <a href="#gallery" class="btn">Explore</a>
+      <h1>Tech-CRAFTERS</h1>
+      <p>We build stunning websites & AI-powered apps with passion.</p>
+      <a href="#gallery" class="btn">Explore Works</a>
     </div>
   </header>
 
+  <!-- Gallery Section -->
   <section class="gallery" id="gallery">
-    <h2>Our Works</h2>
+    <h2>Our Latest Projects</h2>
     <div class="images">
-      <img src="https://source.unsplash.com/featured/?website" alt="Web Design" />
-      <img src="https://source.unsplash.com/featured/?app" alt="App Design" />
-      <img src="https://source.unsplash.com/featured/?technology" alt="Tech Image" />
-      <img src="https://source.unsplash.com/featured/?coding" alt="Coding Image" />
-      <img src="https://source.unsplash.com/featured/?digital" alt="Digital World" />
-      <img src="https://source.unsplash.com/featured/?ai" alt="AI Innovation" />
+      <img src="https://images.unsplash.com/photo-1581092337405-15d1c3dc8cdd?auto=format&fit=crop&w=800&q=80" alt="Work 1">
+      <img src="https://images.unsplash.com/photo-1581093588401-1a9c4f06ba13?auto=format&fit=crop&w=800&q=80" alt="Work 2">
+      <img src="https://images.unsplash.com/photo-1611171711919-1c0e2ad573b1?auto=format&fit=crop&w=800&q=80" alt="Work 3">
+      <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=800&q=80" alt="Work 4">
+      <img src="https://images.unsplash.com/photo-1618005198919-d3d4f4e7ebf3?auto=format&fit=crop&w=800&q=80" alt="Work 5">
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Work 6">
     </div>
   </section>
 
-  <footer id="contact">
+  <!-- Footer -->
+  <footer>
     <h2>Contact Us</h2>
     <p>Email: techcrafters@email.com</p>
     <p>&copy; 2025 Tech-CRAFTERS. All rights reserved.</p>
