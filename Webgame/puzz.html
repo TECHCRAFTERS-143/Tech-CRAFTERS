@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Full Puzzle Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #e67e22;
+    }
+
+    select, button, input[type="file"] {
+      padding: 8px;
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    #puzzle {
+      display: grid;
+      gap: 2px;
+      margin: 20px auto;
+      width: fit-content;
+    }
+
+    .tile {
+      cursor: pointer;
+      border: 1px solid #ddd;
+      background-size: 100% 100%;
+    }
+
+    .empty {
+      background: #fff;
+      border: 1px dashed #aaa;
+    }
+
+    #status, #moves, #timer {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧩 Custom Image Puzzle Game</h1>
+
+  <div id="controls">
+    <label>Size:</label>
+    <select id="sizeSelect">
+      <option value="3">3 x 3</option>
+      <option value="4">4 x 4</option>
+      <option value="5">5 x 5</option>
+      <option value="6">6 x 6</option>
+      <option value="7">7 x 7</option>
+    </select>
+
+    <label>Image:</label>
+    <select id="imageSelect">
+      <option value="mech.jpg">mech</option>
+      <option value="ece.jpg">ece</option>
+      <option value="cs.jpg">cse</option>
+      <option value="clg.jpg">study</option>
+    </select>
+
+    <label>Or Upload:</label>
+    <input type="file" id="uploadImage" accept="image/*">
+
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <div id="puzzle"></div>
+  <div id="moves">Moves: 0</div>
+  <div id="timer">Time: 0s</div>
+  <div id="status"></div>
+
+  <script>
+    const puzzle = document.getElementById('puzzle');
+    const statusText = document.getElementById('status');
+    const moveDisplay = document.getElementById('moves');
+    const timerDisplay = document.getElementById('timer');
+    const imageSelect = document.getElementById('imageSelect');
+    const uploadImage = document.getElementById('uploadImage');
+
+    let size = 3;
+    let tiles = [];
+    let imageURL = '';
+    let emptyIndex = 0;
+    let moves = 0;
+    let timer = 0;
+    let interval;
+
+    uploadImage.addEventListener('change', function () {
+      const file = uploadImage.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imageURL = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function startGame() {
+      clearInterval(interval);
+      timer = 0;
+      moves = 0;
+      updateUI();
+
+      size = parseInt(document.getElementById('sizeSelect').value);
+      if (!imageURL || uploadImage.files.length === 0) {
+        imageURL = imageSelect.value;
+      }
+
+      puzzle.style.gridTemplateColumns = `repeat(${size}, 80px)`;
+      puzzle.style.gridTemplateRows = `repeat(${size}, 80px)`;
+
+      tiles = [];
+      for (let i = 0; i < size * size; i++) {
+        tiles.push(i);
+      }
+
+      tiles.sort(() => Math.random() - 0.5);
+      emptyIndex = tiles.indexOf(size * size - 1);
+      drawTiles();
+
+      interval = setInterval(() => {
+        timer++;
+        updateUI();
+      }, 1000);
+    }
+
+    function updateUI() {
+      moveDisplay.textContent = `Moves: ${moves}`;
+      timerDisplay.textContent = `Time: ${timer}s`;
+    }
+
+    function drawTiles() {
+      puzzle.innerHTML = '';
+      for (let i = 0; i < tiles.length; i++) {
+        const tileNum = tiles[i];
+        const div = document.createElement('div');
+        div.classList.add('tile');
+        div.style.width = div.style.height = '80px';
+        div.dataset.index = i;
+
+        if (tileNum === size * size - 1) {
+          div.classList.add('empty');
+        } else {
+          const x = tileNum % size;
+          const y = Math.floor(tileNum / size);
+          div.style.backgroundImage = `url('${imageURL}')`;
+          div.style.backgroundSize = `${size * 80}px ${size * 80}px`;
+          div.style.backgroundPosition = `-${x * 80}px -${y * 80}px`;
+        }
+
+        div.addEventListener('click', () => tileClick(i));
+        puzzle.appendChild(div);
+      }
+    }
+
+    function tileClick(index) {
+      if (isAdjacent(index, emptyIndex)) {
+        [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+        emptyIndex = index;
+        moves++;
+        drawTiles();
+        updateUI();
+        if (isSolved()) {
+          clearInterval(interval);
+          statusText.textContent = `🎉 Solved in ${moves} moves and ${timer} seconds!`;
+        }
+      }
+    }
+
+    function isAdjacent(i1, i2) {
+      const x1 = i1 % size, y1 = Math.floor(i1 / size);
+      const x2 = i2 % size, y2 = Math.floor(i2 / size);
+      return (Math.abs(x1 - x2) + Math.abs(y1 - y2)) === 1;
+    }
+
+    function isSolved() {
+      for (let i = 0; i < tiles.length - 1; i++) {
+        if (tiles[i] !== i) return false;
+      }
+      return true;
+    }
+
+    // Start default
+    startGame();
+  </script>
+
+</body>
+</html>
